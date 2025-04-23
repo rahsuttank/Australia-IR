@@ -1,0 +1,7 @@
+{
+    "add-field": {"name":"url", "type":"string", "indexed":true, "stored":true},
+    "add-field": {"name":"outgoing_links", "type":"string", "multiValued":true, "indexed":true, "stored":true},
+    "add-field": {"name":"title", "type":"text_general", "indexed":true, "stored":true},
+    "add-field": {"name":"content", "type":"text_general", "indexed":true, "stored":true}
+  }
+  
