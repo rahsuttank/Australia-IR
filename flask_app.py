@@ -146,30 +146,30 @@ def get_clustering_results(clust_inp, param_type):
 
 
 def get_hits_results(clust_inp):
-    # authority_score_file = open("HITS/precomputed_scores/authority_score_2", 'r').read()
-    # authority_score_dict = json.loads(authority_score_file)
+    authority_score_file = open("HITS/precomputed_scores/authority_score_2", 'r').read()
+    authority_score_dict = json.loads(authority_score_file)
 
-    # clust_inp = sorted(clust_inp, key=lambda x: authority_score_dict.get(x['url'], 0.0), reverse=True)
-    # return clust_inp
+    clust_inp = sorted(clust_inp, key=lambda x: authority_score_dict.get(x['url'][0], 0.0), reverse=True)
+    return clust_inp
 
 
-    with open('HITS/precomputed_scores/authority_score_2') as f:
-        authority_score_dict = json.load(f)
+    # with open('HITS/precomputed_scores/authority_score_2') as f:
+    #     authority_score_dict = json.load(f)
     
-    # Ensure api_resp is a list of dictionaries
-    # if not isinstance(clust_inp, list):
-    #     api_resp = [clust_inp]  # Wrap single dict in a list
+    # # Ensure api_resp is a list of dictionaries
+    # # if not isinstance(clust_inp, list):
+    # #     api_resp = [clust_inp]  # Wrap single dict in a list
     
-    # Add error handling for URL access
-    # clust_inp = []
-    # for item in api_resp:
-    #     if isinstance(item, dict) and 'url' in item:
-    #         clust_inp.append(item)
+    # # Add error handling for URL access
+    # # clust_inp = []
+    # # for item in api_resp:
+    # #     if isinstance(item, dict) and 'url' in item:
+    # #         clust_inp.append(item)
     
-    # Sort by authority score
-    return sorted(clust_inp, 
-                 key=lambda x: authority_score_dict.get(x.get('url', ''), 0.0), 
-                 reverse=True)
+    # # Sort by authority score
+    # return sorted(clust_inp, 
+    #              key=lambda x: authority_score_dict.get(x.get('url', ''), 0.0), 
+    #              reverse=True)
 
 
 app.run(port='5000')
