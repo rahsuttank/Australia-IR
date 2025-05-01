@@ -70,7 +70,7 @@ def association_main(query, solr_results):
 
     for result in solr_results:
         tokens_this_document = tokenize_doc(result['content'], stop_words)
-        tokens_map[result['digest']] = tokens_this_document
+        tokens_map[result['digest'][0]] = tokens_this_document
         tokens.append(tokens_this_document)
 
     vocab = set([token for tokens_this_doc in tokens for token in tokens_this_doc])

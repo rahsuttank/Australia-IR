@@ -7,7 +7,7 @@ with open('d:/Lectures/Spring 2024/IR/Australia-IR/checkpoint_1000_webgraph.json
 
 solr_docs = []
 for url, items in web_graph.items():
-    content = items.get("text", "")  # Ensure there's content to hash
+    content = items.get("content", "")  # Ensure there's content to hash
     digest = hashlib.sha256(content.encode('utf-8')).hexdigest()
 
     solr_doc = {
