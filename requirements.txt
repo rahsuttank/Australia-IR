@@ -1,0 +1,6 @@
+flask
+flask-cors
+pysolr
+pyspellchecker==0.7.2
+numpy
+nltk
