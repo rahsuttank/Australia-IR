@@ -6,6 +6,8 @@ import collections
 import heapq
 
 import numpy as np
+import nltk
+nltk.download('stopwords') 
 from nltk.corpus import stopwords
 from nltk import PorterStemmer
 import pysolr
@@ -21,10 +23,11 @@ import pprint
 
 # returns a list of tokens
 def tokenize_doc(doc_text, stop_words):
-    # doc_text = doc_text.replace('\n', ' ')
-    # doc_text = " ".join(re.findall('[a-zA-Z]+', doc_text))
-    # tokens = doc_text.split(' ')
-    tokens = []
+    if isinstance(doc_text, list):
+        doc_text = " ".join(doc_text)
+    elif not isinstance(doc_text, str):
+        doc_text = ""
+
     text = doc_text
     text = re.sub(r'[\n]', ' ', text)
     text = re.sub(r'[,-]', ' ', text)
@@ -34,6 +37,7 @@ def tokenize_doc(doc_text, stop_words):
     tkns = text.split(' ')
     tokens = [token for token in tkns if token not in stop_words and token != '' and not token.isnumeric()]
     return tokens
+
 
 def build_association(id_token_map, vocab, query):
     association_list = []

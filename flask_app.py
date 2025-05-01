@@ -13,7 +13,7 @@ from spellchecker import SpellChecker
 
 spell = SpellChecker()
 # Create a client instance. The timeout and authentication options are not required.
-solr = pysolr.Solr('http://solr:8983/solr/australia3/', always_commit=True, timeout=10)
+solr = pysolr.Solr('http://solr:8983/solr/australia4/', always_commit=True, timeout=10)
 
 app = flask.Flask(__name__)
 CORS(app)
@@ -120,7 +120,7 @@ def get_clustering_results(clust_inp, param_type):
         cluster_map.update({line_split[0]: line_split[1]})
 
     for curr_resp in clust_inp:
-        curr_url = curr_resp["url"]
+        curr_url = curr_resp["url"][0]
         curr_cluster = cluster_map.get(curr_url, "99")
         curr_resp.update({"cluster": curr_cluster})
         curr_resp.update({"done": "False"})
