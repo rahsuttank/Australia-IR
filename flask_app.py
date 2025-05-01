@@ -3,7 +3,7 @@
 import debugpy
 debugpy.listen(("0.0.0.0", 5678))
 print("🟡 Waiting for debugger to attach...")
-debugpy.wait_for_client()  # Comment out if you don’t want blocking wait
+# debugpy.wait_for_client()  # Comment out if you don’t want blocking wait
 
 import flask
 from flask_cors import CORS

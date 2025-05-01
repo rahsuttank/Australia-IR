@@ -17,6 +17,9 @@ COPY . /app
 # Expose Flask port and debugpy port
 EXPOSE 5000 5678
 
+ENV FLASK_APP=flask_app.py
+ENV FLASK_ENV=development
+
 # Optional: NLTK data setup (uncomment if needed)
 # RUN python -m nltk.downloader punkt stopwords
 
