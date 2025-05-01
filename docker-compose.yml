@@ -31,7 +31,7 @@ services:
       - FLASK_APP=flask_app.py
       - FLASK_ENV=development
     command: >
-      flask run --host=0.0.0.0
+      flask run --host=0.0.0.0 --reload
     networks:
       - search-network
     depends_on:

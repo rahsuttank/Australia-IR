@@ -1,6 +1,21 @@
-"""
-Authors: Ruchi Singh, Anshul Pardhi
-"""
+import os
+import debugpy
+import socket
+
+
+DEBUG_PORT = 5680
+
+def is_port_in_use(port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex(("0.0.0.0", port)) == 0
+
+# Only bind once
+if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+    if not is_port_in_use(DEBUG_PORT):
+        debugpy.listen(("0.0.0.0", DEBUG_PORT))
+        print(f"Debugpy listening on port {DEBUG_PORT}")
+    else:
+        print(f"Port {DEBUG_PORT} already in use")
 import flask
 from flask_cors import CORS
 import pysolr
@@ -13,7 +28,7 @@ from spellchecker import SpellChecker
 
 spell = SpellChecker()
 # Create a client instance. The timeout and authentication options are not required.
-solr = pysolr.Solr('http://solr:8983/solr/australia4/', always_commit=True, timeout=10)
+solr = pysolr.Solr('http://solr:8983/solr/australia3/', always_commit=True, timeout=10)
 
 app = flask.Flask(__name__)
 CORS(app)
@@ -80,7 +95,7 @@ def parse_solr_results(solr_results):
             title = ""
             url = ""
             content = ""
-            meta_info = []
+            meta_info = ""
             if 'title' in result:
                 title = result['title']
             if 'url' in result:
