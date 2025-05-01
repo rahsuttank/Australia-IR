@@ -8,14 +8,10 @@ services:
       - "8983:8983"
     volumes:
       - solr_data:/var/solr
-      - ./schema.json:/schema.json
-      - ./solr_docs.json:/solr_docs.json  # Pre-generated outside Docker!
     command: >
       bash -c "
-        solr-precreate australia &&
-        /opt/docker-solr/scripts/wait-for-solr.sh &&
-        until curl -s http://localhost:8983/solr/australia/schema -X POST -H 'Content-type:application/json' --data-binary @/schema.json; do sleep 5; done &&
-        curl -X POST -H 'Content-Type: application/json' 'http://localhost:8983/solr/australia/update?commit=true' --data-binary @/solr_docs.json
+        solr-precreate australia3 &&
+        /opt/docker-solr/scripts/wait-for-solr.sh
       "
     networks:
       - search-network

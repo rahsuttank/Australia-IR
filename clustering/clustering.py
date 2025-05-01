@@ -14,7 +14,7 @@ from scipy.cluster.hierarchy import ward, dendrogram
 start_time = time.time()
 
 # Open SOLR Index JSON file (Get your SOLR response JSON file here, file too large to upload to GitHub)
-f = open('solr_index_full_data.json', encoding="ISO-8859-1")
+f = open('d:/Lectures/Spring 2024/IR/Australia-IR/solr_docs_for_clustering.json', encoding="ISO-8859-1")
 data = json.load(f)
 f.close()
 
@@ -56,30 +56,29 @@ results.to_csv("clustering_f.txt", sep=',', columns=['id', 'cluster'], header=Fa
 print("Time taken for storing results of flat clustering: ", time.time() - start_time)
 
 # Apply Hierarchical Clustering (Single link)
+# Compute distance
 dist = 1 - cosine_similarity(X)
 print("Time taken for computing cosine similarity: ", time.time() - start_time)
 
-agg_d = fastcluster.linkage(dist, method='single', metric='euclidean')
+# Apply hierarchical clustering
+agg_d = fastcluster.linkage(dist, method='single')
 print("Time taken for single linkage: ", time.time() - start_time)
 
+# Draw dendrogram
 fig, ax = plt.subplots()
-ax = dendrogram(fastcluster.single(agg_d), orientation="right", labels=url_list)
+ddata = dendrogram(agg_d, orientation="right", labels=url_list)
+plt.tight_layout()
+plt.savefig("dendrogram.png")  # optional: save it to a file
 print("Time taken for applying hierarchical clustering: ", time.time() - start_time)
 
-# Get labels
-for key in ax:
-    if key == "ivl":
-        hc_key = ax[key]
-    if key == "color_list":
-        hc_dict = dict([(y,x+1) for x,y in enumerate(sorted(set(ax[key])))])
-        hc_value = [hc_dict[x] for x in ax[key]]
-print("Time taken for getting labels: ", time.time() - start_time)
+# Get labels for each URL
+hc_key = ddata["ivl"]
+hc_dict = {y: x+1 for x, y in enumerate(sorted(set(ddata["color_list"])))}
+hc_value = [hc_dict[x] for x in ddata["color_list"]]
 
-# Store hierarchical clustering results in a file
+# Save results
 hc_cluster_series = pd.Series(hc_value)
 hc_id_series = pd.Series(hc_key)
-hc_results = (pd.concat([hc_id_series, hc_cluster_series], axis=1))
+hc_results = pd.concat([hc_id_series, hc_cluster_series], axis=1)
 hc_results.columns = ['id', 'cluster']
-hc_results.to_csv("clustering_h8.txt", sep=',', columns=['id', 'cluster'], header=False, index=False, encoding='utf-8')
-
-print("Time taken for storing results of hierarchical clustering: ", time.time() - start_time)
+hc_results.to_csv("clustering_h8.txt", sep=',', header=False, index=False, encoding='utf-8')

@@ -1,10 +1,6 @@
-
-
-import debugpy
-debugpy.listen(("0.0.0.0", 5678))
-print("🟡 Waiting for debugger to attach...")
-# debugpy.wait_for_client()  # Comment out if you don’t want blocking wait
-
+"""
+Authors: Ruchi Singh, Anshul Pardhi
+"""
 import flask
 from flask_cors import CORS
 import pysolr
@@ -17,7 +13,7 @@ from spellchecker import SpellChecker
 
 spell = SpellChecker()
 # Create a client instance. The timeout and authentication options are not required.
-solr = pysolr.Solr('http://solr:8983/solr/australia/', always_commit=True, timeout=10)
+solr = pysolr.Solr('http://solr:8983/solr/australia3/', always_commit=True, timeout=10)
 
 app = flask.Flask(__name__)
 CORS(app)
@@ -91,6 +87,8 @@ def parse_solr_results(solr_results):
                 url = result['url']
             if 'content' in result:
                 content = result['content']
+                if isinstance(content, list):
+                    content = " ".join(content)
                 meta_info = content[:200]
                 meta_info = meta_info.replace("\n", " ")
                 meta_info = " ".join(re.findall("[a-zA-Z]+", meta_info))
@@ -106,11 +104,11 @@ def parse_solr_results(solr_results):
 
 def get_clustering_results(clust_inp, param_type):
     if param_type == "flat_clustering":
-        f = open('clustering/precomputed_clustering/clustering_f.txt')
+        f = open('clustering_f.txt')
         lines = f.readlines()
         f.close()
     elif param_type == "hierarchical_clustering":
-        f = open('clustering/precomputed_clustering/clustering_h.txt')
+        f = open('clustering_h8.txt')
         lines = f.readlines()
         f.close()
 
