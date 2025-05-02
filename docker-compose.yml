@@ -10,7 +10,7 @@ services:
       - solr_data:/var/solr
     command: >
       bash -c "
-        solr-precreate australia5 &&
+        solr-precreate australia &&
         /opt/docker-solr/scripts/wait-for-solr.sh
       "
     networks:

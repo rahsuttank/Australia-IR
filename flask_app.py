@@ -27,8 +27,11 @@ from query_expansion.Metric_Clusters import metric_cluster_main
 from spellchecker import SpellChecker
 
 spell = SpellChecker()
+
+# currently used Solr core 
+CURRENT_CORE = "australia3/"
 # Create a client instance. The timeout and authentication options are not required.
-solr = pysolr.Solr('http://solr:8983/solr/australia5/', always_commit=True, timeout=10)
+solr = pysolr.Solr('http://solr:8983/solr/' + CURRENT_CORE, always_commit=True, timeout=10)
 
 app = flask.Flask(__name__)
 CORS(app)

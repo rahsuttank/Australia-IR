@@ -1,3 +1,4 @@
+// App.jsx
 import React, { useState } from 'react';
 import './style.css';
 
@@ -24,9 +25,7 @@ function App() {
   const renderResults = () => {
     if (!results || results.length === 0) {
       return <p style={{ fontStyle: 'italic', color: '#777' }}>No results found.</p>;
-
     }
-  
     return results.map((item, index) => (
       <div key={index}>
         <a href={item.url}>{item.title}</a>
@@ -36,55 +35,67 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <h1>Australia Search Engine</h1>
-      <form className="form-section" onSubmit={(e) => e.preventDefault()}>
-        <input
-          type="text"
-          placeholder="Enter query here..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
+    <div className="app-container">
+      <header className="top-bar">
+        <span>Australia Search Engine</span>
+      </header>
 
-        <fieldset>
-          <legend>Relevance Model Options:</legend>
-          <input type="radio" id="page_rank" name="type" value="page_rank" checked={type === 'page_rank'} onChange={() => setType('page_rank')} />
-          <label htmlFor="page_rank">Page Rank</label>
-          <input type="radio" id="hits" name="type" value="hits" checked={type === 'hits'} onChange={() => setType('hits')} />
-          <label htmlFor="hits">HITS</label>
-        </fieldset>
+      <section className="search-section">
+        <div className="search-bar-group">
+          <input
+            type="text"
+            placeholder="Enter query..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <button onClick={handleSearch}>Search</button>
+        </div>
 
-        <fieldset>
-          <legend>Clustering Options:</legend>
-          <input type="radio" id="flat_clustering" name="type" value="flat_clustering" checked={type === 'flat_clustering'} onChange={() => setType('flat_clustering')} />
-          <label htmlFor="flat_clustering">Flat Clustering</label>
-          <input type="radio" id="hierarchical_clustering" name="type" value="hierarchical_clustering" checked={type === 'hierarchical_clustering'} onChange={() => setType('hierarchical_clustering')} />
-          <label htmlFor="hierarchical_clustering">Hierarchical Clustering</label>
-        </fieldset>
+        <div className="toolbar">
+          <div className="toggle-group">
+            <legend>Relevance</legend>
+            <div className="toggle-buttons">
+              <input type="radio" id="page_rank" name="type" value="page_rank" checked={type === 'page_rank'} onChange={() => setType('page_rank')} />
+              <label htmlFor="page_rank">PageRank</label>
+              <input type="radio" id="hits" name="type" value="hits" checked={type === 'hits'} onChange={() => setType('hits')} />
+              <label htmlFor="hits">HITS</label>
+            </div>
+          </div>
 
-        <fieldset>
-          <legend>Query Expansion Option:</legend>
-          <input type="radio" id="association_qe" name="type" value="association_qe" checked={type === 'association_qe'} onChange={() => setType('association_qe')} />
-          <label htmlFor="association_qe">Association</label>
-          <input type="radio" id="metric_qe" name="type" value="metric_qe" checked={type === 'metric_qe'} onChange={() => setType('metric_qe')} />
-          <label htmlFor="metric_qe">Metric</label>
-          <input type="radio" id="scalar_qe" name="type" value="scalar_qe" checked={type === 'scalar_qe'} onChange={() => setType('scalar_qe')} />
-          <label htmlFor="scalar_qe">Scalar</label>
-        </fieldset>
+          <div className="toggle-group">
+            <legend>Clustering</legend>
+            <div className="toggle-buttons">
+              <input type="radio" id="flat_clustering" name="type" value="flat_clustering" checked={type === 'flat_clustering'} onChange={() => setType('flat_clustering')} />
+              <label htmlFor="flat_clustering">Flat</label>
+              <input type="radio" id="hierarchical_clustering" name="type" value="hierarchical_clustering" checked={type === 'hierarchical_clustering'} onChange={() => setType('hierarchical_clustering')} />
+              <label htmlFor="hierarchical_clustering">Hierarchical</label>
+            </div>
+          </div>
 
-        <input type="button" value="Search" onClick={handleSearch} />
-      </form>
+          <div className="toggle-group">
+            <legend>Query Expansion</legend>
+            <div className="toggle-buttons">
+              <input type="radio" id="association_qe" name="type" value="association_qe" checked={type === 'association_qe'} onChange={() => setType('association_qe')} />
+              <label htmlFor="association_qe">Association</label>
+              <input type="radio" id="metric_qe" name="type" value="metric_qe" checked={type === 'metric_qe'} onChange={() => setType('metric_qe')} />
+              <label htmlFor="metric_qe">Metric</label>
+              <input type="radio" id="scalar_qe" name="type" value="scalar_qe" checked={type === 'scalar_qe'} onChange={() => setType('scalar_qe')} />
+              <label htmlFor="scalar_qe">Scalar</label>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <section id="results">{renderResults()}</section>
+      <section id="results" className="results-section">
+        {renderResults()}
+      </section>
 
-      <h2 style={{ color: 'dodgerblue' }}>Google Search</h2>
-      <iframe id="google" title="google" width="90%" height="500" />
-
-      <h2 style={{ color: 'brown' }}>Bing Search</h2>
-      <iframe id="bing" title="bing" width="90%" height="500" />
+      <section className="iframe-section">
+        <iframe id="google" title="Google Search" />
+        <iframe id="bing" title="Bing Search" />
+      </section>
     </div>
   );
 }
 
 export default App;
-
