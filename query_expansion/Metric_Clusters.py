@@ -206,7 +206,7 @@ def metric_cluster_main(query, solr_results):
 
     for result in solr_results:
         
-        document_id = result['digest']
+        document_id = result['digest'][0]
         document_ids.append(document_id)
         tokens_this_document = tokenize_doc(result['content'], stop_words)
         token_counts = collections.Counter(tokens_this_document)
@@ -224,7 +224,11 @@ def metric_cluster_main(query, solr_results):
     metric_clusters = get_metric_clusters(tokens_map, stem_map, query)
     metric_clusters2 = [elem for cluster in metric_clusters for elem in cluster]
     metric_clusters2.sort(key=lambda x:x.value,reverse=True)
-    i=0;
+    
+    if len(metric_clusters2) < 5:
+        return query
+
+    i=0
     while(i<3):
         query += ' '+ str(metric_clusters2[i].v)
         i+=1

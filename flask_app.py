@@ -28,7 +28,7 @@ from spellchecker import SpellChecker
 
 spell = SpellChecker()
 # Create a client instance. The timeout and authentication options are not required.
-solr = pysolr.Solr('http://solr:8983/solr/australia3/', always_commit=True, timeout=10)
+solr = pysolr.Solr('http://solr:8983/solr/australia5/', always_commit=True, timeout=10)
 
 app = flask.Flask(__name__)
 CORS(app)
@@ -39,6 +39,7 @@ app.config["DEBUG"] = True
 def get_query():
     if 'query' in request.args and 'type' in request.args:
         query = str(request.args['query'])
+        print(query)
         type =  str(request.args['type'])
         total_results = 20
         if type == "association_qe" or type == "metric_qe" or type == "scalar_qe":
@@ -53,20 +54,24 @@ def get_query():
         elif type == "hits":
             result = get_hits_results(api_resp)
         elif type == "association_qe":
-            query = spell.correction(query)
+            # query = spell.correction(query)
+            print(query)
             expanded_query = association_main(query, solr_results)
+            expanded_query = 'url:' + expanded_query
             solr_res_after_qe = get_results_from_solr(expanded_query, 20)
             api_resp = parse_solr_results(solr_res_after_qe)
             result = api_resp
         elif type == "metric_qe":
-            query = spell.correction(query)
+            # query = spell.correction(query)
             expanded_query = metric_cluster_main(query, solr_results)
+            expanded_query = 'url:' + expanded_query
             solr_res_after_qe = get_results_from_solr(expanded_query, 20)
             api_resp = parse_solr_results(solr_res_after_qe)
             result = api_resp
         elif type == "scalar_qe":
-            query = spell.correction(query)
+            # query = spell.correction(query)
             expanded_query = association_main(query, solr_results)
+            expanded_query = 'url:' + expanded_query
             solr_res_after_qe = get_results_from_solr(expanded_query, 20)
             api_resp = parse_solr_results(solr_res_after_qe)
             result = api_resp

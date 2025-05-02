@@ -59,7 +59,7 @@ def build_association(id_token_map, vocab, query):
 	
 def association_main(query, solr_results):
     stop_words = set(stopwords.words('english'))
-    #query = 'olympic medal'
+    query = 'australia'
     # solr = pysolr.Solr('http://localhost:8983/solr/nutch/', always_commit=True, timeout=10)
     # results = get_results_from_solr(query, solr)
     tokens = []
@@ -77,7 +77,10 @@ def association_main(query, solr_results):
     association_list = build_association(tokens_map, vocab, query)
     association_list.sort(key = lambda x: x[2],reverse=True)
     # pprint.pprint(association_list)
-    i=2;
+    if len(association_list) < 5:
+        return query
+
+    i=2
     while(i<5):
         query += ' '+str(association_list[i][0])
         i +=1
