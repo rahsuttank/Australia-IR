@@ -10,7 +10,7 @@ services:
       - solr_data:/var/solr
     command: >
       bash -c "
-        solr-precreate australia3 &&
+        solr-precreate australia5 &&
         /opt/docker-solr/scripts/wait-for-solr.sh
       "
     networks:
@@ -23,7 +23,7 @@ services:
     container_name: flask-api
     ports:
       - "5000:5000"
-      - "5678:5678"  # Debugpy port
+      - "5680:5680"  # Debugpy port
     volumes:
       - .:/app        # Map your entire project for live-reload + VS Code access
     working_dir: /app

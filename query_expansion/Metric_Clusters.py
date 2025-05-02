@@ -162,12 +162,15 @@ def get_metric_clusters(tokens_map, stem_map, query):
 
             for string1 in i_strings:
                 for string2 in j_strings:
+                    if string1 not in tokens_map or string2 not in tokens_map:
+                        continue
                     i_map = tokens_map[string1]
                     j_map = tokens_map[string2]
                     for document_id in i_map:
                         if document_id in j_map:
-                            if i_map[document_id] - j_map[document_id] != 0:
-                                cuv += 1 / abs( i_map[document_id] - j_map[document_id] )
+                            diff = abs(i_map[document_id] - j_map[document_id])
+                            cuv += 1 / diff if diff != 0 else 1
+
 
             matrix[i][j] = Element(stem_i, stem_j, cuv)
 
@@ -180,7 +183,9 @@ def get_metric_clusters(tokens_map, stem_map, query):
 
             cuv = 0.0
             if matrix[i][j] != 0:
-                cuv = matrix[i][j].value / ( len(stem_map[stem_i]) * len(stem_map[stem_j]) )
+                denom = len(stem_map[stem_i]) * len(stem_map[stem_j])
+                cuv = matrix[i][j].value / denom if denom != 0 else 0
+
 
             normalized_matrix[i][j] = Element(stem_i, stem_j, cuv)
 
@@ -208,7 +213,7 @@ def metric_cluster_main(query, solr_results):
         
         document_id = result['digest'][0]
         document_ids.append(document_id)
-        tokens_this_document = tokenize_doc(result['content'], stop_words)
+        tokens_this_document = tokenize_doc(result['content'][0], stop_words)
         token_counts = collections.Counter(tokens_this_document)
         for token in tokens_this_document:
             if token not in tokens_map:
@@ -220,7 +225,7 @@ def metric_cluster_main(query, solr_results):
         tokens.append(tokens_this_document)
 
     stem_map = make_stem_map(tokens)
-
+    query = 'australia'
     metric_clusters = get_metric_clusters(tokens_map, stem_map, query)
     metric_clusters2 = [elem for cluster in metric_clusters for elem in cluster]
     metric_clusters2.sort(key=lambda x:x.value,reverse=True)
