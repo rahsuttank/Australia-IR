@@ -9,6 +9,19 @@ body {
   
   .app-container {
     padding: 2rem;
+    z-index: 1;
+  }
+  .background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://freedomhouse.org/sites/default/files/styles/2160x603_fp_scale_crop/public/2024-06/Australia_0.png?h=4eddb57e&itok=VH7VDe4T'); /* Replace with your image URL */
+    background-size: cover;
+    background-position: center;
+    /* filter: blur(8px); Adjust the blur amount */
+    z-index: -1; /* Ensure background stays behind the content */
   }
   
   .top-bar {
@@ -41,13 +54,14 @@ body {
     border-radius: 6px;
     border: 1px solid #ccc;
     font-size: 1rem;
-    background-color: #ffffff;
-    color: #000000;
+    /* background-color: #ffffff; */
+    background: #242424;
+    color: #fff;
   }
   
   .search-bar-group button {
     padding: 0.75rem 1.5rem;
-    background-color: #d62828; /* red from the flag */
+    background-color: #426893; /* red from the flag */
     color: white;
     border: none;
     border-radius: 6px;
@@ -64,14 +78,14 @@ body {
   }
   
   .toggle-group {
-    background: #ffffff;
+    background: #242424;
     padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    color: #000000;
+    color: #fff;
   }
   
   .toggle-buttons {
@@ -96,12 +110,13 @@ body {
   }
   
   .toggle-buttons input[type="radio"]:checked + label {
-    background-color: #0057b8; /* flag blue */
+    background-color: #426893; /* flag blue */
     color: white;
   }
   
   .results-section {
-    background: #ffffff;
+    /* background: #ffffff; */
+    background: #242424;
     padding: 1.5rem;
     border-radius: 10px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);

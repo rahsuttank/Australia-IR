@@ -35,6 +35,7 @@ function App() {
   };
 
   return (
+    <div className="background-image">
     <div className="app-container">
       <header className="top-bar">
         <span>Australia Search Engine</span>
@@ -94,6 +95,7 @@ function App() {
         <iframe id="google" title="Google Search" />
         <iframe id="bing" title="Bing Search" />
       </section>
+    </div>
     </div>
   );
 }
