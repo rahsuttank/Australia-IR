@@ -1,29 +1,40 @@
 import os
+import debugpy
 import socket
-import flask # type: ignore
-from flask_cors import CORS # type: ignore
-import pysolr # type: ignore
+
+
+DEBUG_PORT = 5680
+
+def is_port_in_use(port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex(("0.0.0.0", port)) == 0
+
+# Only bind once
+if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+    if not is_port_in_use(DEBUG_PORT):
+        debugpy.listen(("0.0.0.0", DEBUG_PORT))
+        print(f"Debugpy listening on port {DEBUG_PORT}")
+    else:
+        print(f"Port {DEBUG_PORT} already in use")
+import flask
+from flask_cors import CORS
+import pysolr
 import re
 from flask import request, jsonify
 import json
 from query_expansion.Association_Cluster import association_main
 from query_expansion.Metric_Clusters import metric_cluster_main
 from spellchecker import SpellChecker
-from sentence_transformers import SentenceTransformer, util
-
-
-model = SentenceTransformer('all-MiniLM-L6-v2')
-doc_vectors = {}
 
 spell = SpellChecker()
 
 # currently used Solr core 
-CURRENT_CORE = "australia/"
+CURRENT_CORE = "australia3/"
 # Create a client instance. The timeout and authentication options are not required.
-solr = pysolr.Solr('http://localhost:8983/solr/' + CURRENT_CORE, always_commit=True, timeout=10)
+solr = pysolr.Solr('http://solr:8983/solr/' + CURRENT_CORE, always_commit=True, timeout=10)
 
 app = flask.Flask(__name__)
-CORS(app, origins=["http://localhost:3000"])
+CORS(app)
 app.config["DEBUG"] = True
 
 
@@ -33,9 +44,9 @@ def get_query():
         query = str(request.args['query'])
         print(query)
         type =  str(request.args['type'])
-        total_results = 50
+        total_results = 20
         if type == "association_qe" or type == "metric_qe" or type == "scalar_qe":
-            total_results = 50
+            total_results = 20
 
         solr_results = get_results_from_solr(query, total_results)
         api_resp = parse_solr_results(solr_results)
@@ -47,7 +58,7 @@ def get_query():
             result = get_hits_results(api_resp)
         elif type == "association_qe":
             # query = spell.correction(query)
-            # print(query)
+            print(query)
             expanded_query = association_main(query, solr_results)
             expanded_query = 'url:' + expanded_query
             solr_res_after_qe = get_results_from_solr(expanded_query, 20)
@@ -73,48 +84,13 @@ def get_query():
         return "Error: No query or type provided"
 
 
-# def get_results_from_solr(query, no_of_results):
-#     results = solr.search(query, search_handler="/select", **{
-#         "wt": "json",
-#         "rows": no_of_results
-#     })
-#     return results
-
 def get_results_from_solr(query, no_of_results):
-    return solr.search(query, search_handler="/select", **{
-        "defType": "edismax", 
-        "qf": "title^2 content^ url",
-        "pf": "title^2 content^5",
-        "qs": 4,
-        "mm": "1<60%",  # allow some flexibility
-        "rows": no_of_results,
+    results = solr.search(query, search_handler="/select", **{
         "wt": "json",
-        "fl": "*,score"
+        "rows": no_of_results
     })
-    # query_vector = model.encode(query, convert_to_tensor=True)
+    return results
 
-    # for result in solr_results:
-    #     content = result.get('content', "")
-    #     if isinstance(content, list):
-    #         content = " ".join(content)
-    #     url = result.get('url', [""])[0]
-
-    #     doc_vector = doc_vectors.get(url)
-    #     if doc_vector is None:
-    #         doc_vector = model.encode(content, convert_to_tensor=True)
-    #         doc_vectors[url] = doc_vector
-
-    #     sim_score = float(util.cos_sim(query_vector, doc_vector))
-    #     solr_score = float(result.get('score', 0.0))
-    #     final_score = 0.6 * solr_score + 0.4 * sim_score
-
-    #     result["final_score"] = final_score
-    #     print(final_score)
-
-    # # Sort by final_score
-    # solr_results.sort(key=lambda r: r["final_score"], reverse=True)
-
-    return solr_results
 
 def parse_solr_results(solr_results):
     if solr_results.hits == 0:
@@ -151,11 +127,11 @@ def parse_solr_results(solr_results):
 
 def get_clustering_results(clust_inp, param_type):
     if param_type == "flat_clustering":
-        f = open('flat_clustering_output.txt')
+        f = open('clustering_f.txt')
         lines = f.readlines()
         f.close()
     elif param_type == "hierarchical_clustering":
-        f = open('complete_linkage_clusters.txt')
+        f = open('clustering_h8.txt')
         lines = f.readlines()
         f.close()
 
