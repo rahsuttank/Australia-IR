@@ -1,28 +1,37 @@
-/* App.css */
+html, body {
+  margin: 0;
+  padding: 0;
+  /* Remove height: 100% to allow scrolling */
+}
+
+/* Body styling */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 2rem;
-    background-color: #001f4d; /* dark navy */
-    color: #ffffff; /* white text */
-  }
-  
-  .app-container {
-    padding: 2rem;
-    z-index: 1;
-  }
-  .background-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('https://freedomhouse.org/sites/default/files/styles/2160x603_fp_scale_crop/public/2024-06/Australia_0.png?h=4eddb57e&itok=VH7VDe4T'); /* Replace with your image URL */
-    background-size: cover;
-    background-position: center;
-    /* filter: blur(8px); Adjust the blur amount */
-    z-index: -1; /* Ensure background stays behind the content */
-  }
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #001f4d;
+  color: #ffffff;
+}
+
+/* Make background stretch but not block scrolling */
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%; /* allow full page stretch */
+  background-image: url('https://freedomhouse.org/sites/default/files/styles/2160x603_fp_scale_crop/public/2024-06/Australia_0.png?h=4eddb57e&itok=VH7VDe4T');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+}
+
+/* App content should naturally flow and scroll */
+.app-container {
+  position: relative;
+  z-index: 1;
+  padding: 2rem;
+}
+
   
   .top-bar {
     display: flex;
