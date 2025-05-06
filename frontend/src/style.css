@@ -1,0 +1,169 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  /* Remove height: 100% to allow scrolling */
+}
+
+/* Body styling */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #001f4d;
+  color: #ffffff;
+}
+
+/* Make background stretch but not block scrolling */
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%; /* allow full page stretch */
+  background-image: url('https://freedomhouse.org/sites/default/files/styles/2160x603_fp_scale_crop/public/2024-06/Australia_0.png?h=4eddb57e&itok=VH7VDe4T');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+}
+
+/* App content should naturally flow and scroll */
+.app-container {
+  position: relative;
+  z-index: 1;
+  padding: 2rem;
+}
+
+  
+.top-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 1rem 0;  /* top and bottom padding */
+  color: #ffffff;
+  text-align: center;
+}
+
+  
+  .search-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .search-bar-group {
+    display: flex;
+    width: 60%;
+    max-width: 800px;
+    gap: 1rem;
+  }
+  
+  .search-bar-group input[type="text"] {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    /* background-color: #ffffff; */
+    background: #242424;
+    color: #fff;
+  }
+  
+  .search-bar-group button {
+    padding: 0.75rem 1.5rem;
+    background-color: #426893; /* red from the flag */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    justify-content: center;
+  }
+  
+  .toggle-group {
+    background: #242424;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: #fff;
+  }
+  
+  .toggle-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .toggle-buttons input[type="radio"] {
+    display: none;
+  }
+  
+  .toggle-buttons label {
+    padding: 0.4rem 0.75rem;
+    background-color: #ecf0f1;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.2s, color 0.2s;
+    font-weight: 500;
+    color: #000000;
+  }
+  
+  .toggle-buttons input[type="radio"]:checked + label {
+    background-color: #426893; /* flag blue */
+    color: white;
+  }
+  
+  .results-section {
+    /* background: #ffffff; */
+    background: #242424;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    color: #000000;
+  }
+  
+  #results > div {
+    background: #ffffff;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  #results a {
+    color: #0057b8;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  
+  #results a:hover {
+    text-decoration: underline;
+  }
+  
+  .iframe-section {
+    display: flex;
+    gap: 2%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .iframe-section iframe {
+    width: 49%;
+    height: 500px;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }

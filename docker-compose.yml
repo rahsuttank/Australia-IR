@@ -8,41 +8,30 @@ services:
       - "8983:8983"
     volumes:
       - solr_data:/var/solr
-      - ./schema.json:/schema.json
-      - ./australia_web_graph.json:/data/australia_web_graph.json
-      - ./convert_to_solr.py:/convert_to_solr.py
-    command: 
-      - bash
-      - -c
-      - |
-        solr-precreate australia && 
-        /opt/docker-solr/scripts/wait-for-solr.sh &&
-        until curl -s http://localhost:8983/solr/australia/schema -X POST -H 'Content-type:application/json' --data-binary @/schema.json; do sleep 5; done &&
-        python /convert_to_solr.py /data/australia_web_graph.json /solr_docs.json &&
-        curl -X POST -H "Content-Type: application/json" 'http://localhost:8983/solr/australia/update?commit=true' --data-binary @/solr_docs.json
+    command: >
+      bash -c "
+        solr-precreate australia &&
+        /opt/docker-solr/scripts/wait-for-solr.sh
+      "
     networks:
       - search-network
 
   flask-api:
-    image: python:3.9
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: flask-api
     ports:
       - "5000:5000"
+      - "5680:5680"  # Debugpy port
     volumes:
-      - ./flask_app.py:/app/flask_app.py
-      - ./query_expansion:/app/query_expansion
-      - ./clustering:/app/clustering
-      - ./HITS:/app/HITS
+      - .:/app        # Map your entire project for live-reload + VS Code access
     working_dir: /app
     environment:
       - FLASK_APP=flask_app.py
       - FLASK_ENV=development
-    command:
-      - bash
-      - -c
-      - |
-        pip install flask flask-cors pysolr pyspellchecker==0.7.2 numpy nltk &&
-        flask run --host=0.0.0.0
+    command: >
+      flask run --host=0.0.0.0 --reload
     networks:
       - search-network
     depends_on:

@@ -1,6 +1,21 @@
-"""
-Authors: Ruchi Singh, Anshul Pardhi
-"""
+import os
+import debugpy
+import socket
+
+
+DEBUG_PORT = 5680
+
+def is_port_in_use(port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex(("0.0.0.0", port)) == 0
+
+# Only bind once
+if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+    if not is_port_in_use(DEBUG_PORT):
+        debugpy.listen(("0.0.0.0", DEBUG_PORT))
+        print(f"Debugpy listening on port {DEBUG_PORT}")
+    else:
+        print(f"Port {DEBUG_PORT} already in use")
 import flask
 from flask_cors import CORS
 import pysolr
@@ -12,8 +27,11 @@ from query_expansion.Metric_Clusters import metric_cluster_main
 from spellchecker import SpellChecker
 
 spell = SpellChecker()
+
+# currently used Solr core 
+CURRENT_CORE = "australia3/"
 # Create a client instance. The timeout and authentication options are not required.
-solr = pysolr.Solr('http://solr:8983/solr/australia/', always_commit=True, timeout=10)
+solr = pysolr.Solr('http://solr:8983/solr/' + CURRENT_CORE, always_commit=True, timeout=10)
 
 app = flask.Flask(__name__)
 CORS(app)
@@ -24,6 +42,7 @@ app.config["DEBUG"] = True
 def get_query():
     if 'query' in request.args and 'type' in request.args:
         query = str(request.args['query'])
+        print(query)
         type =  str(request.args['type'])
         total_results = 20
         if type == "association_qe" or type == "metric_qe" or type == "scalar_qe":
@@ -38,20 +57,24 @@ def get_query():
         elif type == "hits":
             result = get_hits_results(api_resp)
         elif type == "association_qe":
-            query = spell.correction(query)
+            # query = spell.correction(query)
+            print(query)
             expanded_query = association_main(query, solr_results)
+            expanded_query = 'url:' + expanded_query
             solr_res_after_qe = get_results_from_solr(expanded_query, 20)
             api_resp = parse_solr_results(solr_res_after_qe)
             result = api_resp
         elif type == "metric_qe":
-            query = spell.correction(query)
+            # query = spell.correction(query)
             expanded_query = metric_cluster_main(query, solr_results)
+            expanded_query = 'url:' + expanded_query
             solr_res_after_qe = get_results_from_solr(expanded_query, 20)
             api_resp = parse_solr_results(solr_res_after_qe)
             result = api_resp
         elif type == "scalar_qe":
-            query = spell.correction(query)
+            # query = spell.correction(query)
             expanded_query = association_main(query, solr_results)
+            expanded_query = 'url:' + expanded_query
             solr_res_after_qe = get_results_from_solr(expanded_query, 20)
             api_resp = parse_solr_results(solr_res_after_qe)
             result = api_resp
@@ -80,13 +103,15 @@ def parse_solr_results(solr_results):
             title = ""
             url = ""
             content = ""
-            meta_info = []
+            meta_info = ""
             if 'title' in result:
                 title = result['title']
             if 'url' in result:
                 url = result['url']
             if 'content' in result:
                 content = result['content']
+                if isinstance(content, list):
+                    content = " ".join(content)
                 meta_info = content[:200]
                 meta_info = meta_info.replace("\n", " ")
                 meta_info = " ".join(re.findall("[a-zA-Z]+", meta_info))
@@ -102,11 +127,11 @@ def parse_solr_results(solr_results):
 
 def get_clustering_results(clust_inp, param_type):
     if param_type == "flat_clustering":
-        f = open('clustering/precomputed_clustering/clustering_f.txt')
+        f = open('clustering_f.txt')
         lines = f.readlines()
         f.close()
     elif param_type == "hierarchical_clustering":
-        f = open('clustering/precomputed_clustering/clustering_h.txt')
+        f = open('clustering_h8.txt')
         lines = f.readlines()
         f.close()
 
@@ -118,7 +143,7 @@ def get_clustering_results(clust_inp, param_type):
         cluster_map.update({line_split[0]: line_split[1]})
 
     for curr_resp in clust_inp:
-        curr_url = curr_resp["url"]
+        curr_url = curr_resp["url"][0]
         curr_cluster = cluster_map.get(curr_url, "99")
         curr_resp.update({"cluster": curr_cluster})
         curr_resp.update({"done": "False"})

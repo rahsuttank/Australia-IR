@@ -6,6 +6,8 @@ import collections
 import heapq
 
 import numpy as np
+import nltk
+nltk.download('stopwords') 
 from nltk.corpus import stopwords
 from nltk import PorterStemmer
 import pysolr
@@ -21,10 +23,11 @@ import pprint
 
 # returns a list of tokens
 def tokenize_doc(doc_text, stop_words):
-    # doc_text = doc_text.replace('\n', ' ')
-    # doc_text = " ".join(re.findall('[a-zA-Z]+', doc_text))
-    # tokens = doc_text.split(' ')
-    tokens = []
+    if isinstance(doc_text, list):
+        doc_text = " ".join(doc_text)
+    elif not isinstance(doc_text, str):
+        doc_text = ""
+
     text = doc_text
     text = re.sub(r'[\n]', ' ', text)
     text = re.sub(r'[,-]', ' ', text)
@@ -34,6 +37,7 @@ def tokenize_doc(doc_text, stop_words):
     tkns = text.split(' ')
     tokens = [token for token in tkns if token not in stop_words and token != '' and not token.isnumeric()]
     return tokens
+
 
 def build_association(id_token_map, vocab, query):
     association_list = []
@@ -55,7 +59,7 @@ def build_association(id_token_map, vocab, query):
 	
 def association_main(query, solr_results):
     stop_words = set(stopwords.words('english'))
-    #query = 'olympic medal'
+    query = 'australia'
     # solr = pysolr.Solr('http://localhost:8983/solr/nutch/', always_commit=True, timeout=10)
     # results = get_results_from_solr(query, solr)
     tokens = []
@@ -66,14 +70,17 @@ def association_main(query, solr_results):
 
     for result in solr_results:
         tokens_this_document = tokenize_doc(result['content'], stop_words)
-        tokens_map[result['digest']] = tokens_this_document
+        tokens_map[result['digest'][0]] = tokens_this_document
         tokens.append(tokens_this_document)
 
     vocab = set([token for tokens_this_doc in tokens for token in tokens_this_doc])
     association_list = build_association(tokens_map, vocab, query)
     association_list.sort(key = lambda x: x[2],reverse=True)
     # pprint.pprint(association_list)
-    i=2;
+    if len(association_list) < 5:
+        return query
+
+    i=2
     while(i<5):
         query += ' '+str(association_list[i][0])
         i +=1
