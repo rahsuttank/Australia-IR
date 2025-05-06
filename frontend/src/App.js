@@ -24,7 +24,7 @@ function App() {
 
   const renderResults = () => {
     if (!results || results.length === 0) {
-      return <p style={{ fontStyle: 'italic', color: '#777' }}>No results found.</p>;
+      return <p style={{ fontStyle: 'italic', color: '#fff' }}>No results found.</p>;
     }
     return results.map((item, index) => (
       <div key={index} style={{ marginBottom: '1em' }}>
@@ -35,7 +35,8 @@ function App() {
   };
 
   return (
-    <div className="background-image">
+    <div>
+      <div className="background-image" ></div>
       <div className="app-container">
         <header className="top-bar">
           <span>Australia Search Engine</span>
@@ -90,17 +91,17 @@ function App() {
         {/* 3-Column Layout Section */}
         <div style={{ display: 'flex', gap: '1.5%', marginTop: '2rem' }}>
           <div style={{ flex: 1 }}>
-            <h2 style={{ color: 'darkgreen' }}>Internal Results</h2>
+            <h2 style={{ color: 'white' }}>Internal Results</h2>
             <section id="results">{renderResults()}</section>
           </div>
 
           <div style={{ flex: 1 }}>
-            <h2 style={{ color: 'dodgerblue' }}>Google Search</h2>
+            <h2 style={{ color: 'white' }}>Google Search</h2>
             <iframe id="google" title="google" width="100%" height="500" />
           </div>
 
           <div style={{ flex: 1 }}>
-            <h2 style={{ color: 'brown' }}>Bing Search</h2>
+            <h2 style={{ color: 'black' }}>Bing Search</h2>
             <iframe id="bing" title="bing" width="100%" height="500" />
           </div>
         </div>
