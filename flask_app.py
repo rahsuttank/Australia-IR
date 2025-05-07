@@ -114,7 +114,7 @@ def get_results_from_solr(query, no_of_results):
     # # Sort by final_score
     # solr_results.sort(key=lambda r: r["final_score"], reverse=True)
 
-    return solr_results
+    # return solr_results
 
 def parse_solr_results(solr_results):
     if solr_results.hits == 0:
@@ -195,7 +195,7 @@ def get_clustering_results(clust_inp, param_type):
 
 
 def get_hits_results(clust_inp):
-    authority_score_file = open("HITS/precomputed_scores/authority_score_2", 'r').read()
+    authority_score_file = open("HITS/precomputed_scores/authority_score_3", 'r').read()
     authority_score_dict = json.loads(authority_score_file)
 
     clust_inp = sorted(clust_inp, key=lambda x: authority_score_dict.get(x['url'][0], 0.0), reverse=True)

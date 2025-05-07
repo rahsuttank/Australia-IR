@@ -13,13 +13,13 @@ from nltk import PorterStemmer
 import pysolr
 import pprint
 
-# def get_results_from_solr(query, solr):
-#     results = solr.search('text: "'+query+'"', search_handler="/select", **{
-#         "wt": "json",
-#         # "rows": 10
-#         "rows": 50
-#     })
-#     return results
+def get_results_from_solr(query, solr):
+    results = solr.search('content: "'+query+'"', search_handler="/select", **{
+        "wt": "json",
+        # "rows": 10
+        "rows": 50
+    })
+    return results
 
 # returns a list of tokens
 def tokenize_doc(doc_text, stop_words):
@@ -59,13 +59,14 @@ def build_association(id_token_map, vocab, query):
 	
 def association_main(query, solr_results):
     stop_words = set(stopwords.words('english'))
-    query = 'australia'
-    # solr = pysolr.Solr('http://localhost:8983/solr/nutch/', always_commit=True, timeout=10)
-    # results = get_results_from_solr(query, solr)
+    # query = 'australia'
+    solr = pysolr.Solr('http://localhost:8983/solr/australia/', always_commit=True, timeout=10)
+    results = get_results_from_solr(query, solr)
+    print("Results: ", results)
     tokens = []
     token_counts = {}
-    tokens_map = {}
-    # tokens_map = collections.OrderedDict()
+    # tokens_map = {}
+    tokens_map = collections.OrderedDict()
     document_ids = []
 
     for result in solr_results:
@@ -77,6 +78,7 @@ def association_main(query, solr_results):
     association_list = build_association(tokens_map, vocab, query)
     association_list.sort(key = lambda x: x[2],reverse=True)
     # pprint.pprint(association_list)
+    print("Association list: ", association_list)
     if len(association_list) < 5:
         return query
 
@@ -84,4 +86,5 @@ def association_main(query, solr_results):
     while(i<5):
         query += ' '+str(association_list[i][0])
         i +=1
+    print("Query after association: ", query)
     return query
