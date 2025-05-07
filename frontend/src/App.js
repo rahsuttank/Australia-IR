@@ -14,11 +14,11 @@ function App() {
     try {
       const response = await fetch(`${BASE_URL}?query=${query}&type=${type}`);
       const data = await response.json();
-      if (Array.isArray(data)) {
-      setResults(data);
-      setUsedQuery(query);
+      if (Array.isArray(data.results)) {
+      setResults(data.results);
+      setUsedQuery(data.query);
     } else {
-      setResults(data.results || []);
+      setResults([]);
       setUsedQuery(data.query || query);
     }
 
@@ -89,20 +89,31 @@ function App() {
         </section>
 
         {/* 3-Column Layout Section */}
-        <div style={{ display: 'flex', gap: '1.5%', marginTop: '2rem' }}>
-          <div style={{ flex: 1 }}>
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '1.5%',
+            marginTop: '2rem',
+            height: '500px' // Consistent height for all children
+          }}
+        >
+          <div style={{ flex: '1 1 32%' , flexDirection: 'column', display: 'flex', height: '100%' }}>
             <h2 style={{ color: 'white' }}>Internal Results</h2>
-            <section id="results">{renderResults()}</section>
+            <div style={{overflowY: "auto", flexGrow: 1, minHeight: 0 }}> 
+              <section id="results">{renderResults()}</section>
+
+            </div>
           </div>
 
-          <div style={{ flex: 1 }}>
+          <div style={{ flex: '1 1 32%', height: '100%' }}>
             <h2 style={{ color: 'white' }}>Google Search</h2>
-            <iframe id="google" title="google" width="100%" height="500" />
+            <iframe id="google" title="google" width="100%" height="100%" />
           </div>
 
-          <div style={{ flex: 1 }}>
+          <div style={{ flex: '1 1 32%', height: '100%' }}>
             <h2 style={{ color: 'black' }}>Bing Search</h2>
-            <iframe id="bing" title="bing" width="100%" height="500" />
+            <iframe id="bing" title="bing" width="100%" height="100%" />
           </div>
         </div>
 
