@@ -34,43 +34,38 @@ def get_query():
         print(query)
         type =  str(request.args['type'])
         total_results = 50
-        if type == "association_qe" or type == "metric_qe" or type == "scalar_qe":
-            total_results = 50
 
         solr_results = get_results_from_solr(query, total_results)
         api_resp = parse_solr_results(solr_results)
         if type == "page_rank":
             result = api_resp
+            final_query = query
         elif "clustering" in type:
             result = get_clustering_results(api_resp, type)
+            final_query = query
         elif type == "hits":
             result = get_hits_results(api_resp)
+            final_query = query
         elif type == "association_qe":
-            # query = spell.correction(query)
-            # print(query)
             expanded_query = association_main(query, solr_results)
-            expanded_query = 'url:' + expanded_query
-            solr_res_after_qe = get_results_from_solr(expanded_query, 20)
+            solr_res_after_qe = get_results_from_solr(expanded_query, total_results)
             api_resp = parse_solr_results(solr_res_after_qe)
             result = api_resp
+            final_query = expanded_query
         elif type == "metric_qe":
-            # query = spell.correction(query)
             expanded_query = metric_cluster_main(query, solr_results)
-            expanded_query = 'url:' + expanded_query
-            solr_res_after_qe = get_results_from_solr(expanded_query, 20)
+            solr_res_after_qe = get_results_from_solr(expanded_query, total_results)
             api_resp = parse_solr_results(solr_res_after_qe)
             result = api_resp
+            final_query = expanded_query
         elif type == "scalar_qe":
-            # query = spell.correction(query)
             expanded_query = association_main(query, solr_results)
-            expanded_query = 'url:' + expanded_query
-            solr_res_after_qe = get_results_from_solr(expanded_query, 20)
+            solr_res_after_qe = get_results_from_solr(expanded_query, total_results)
             api_resp = parse_solr_results(solr_res_after_qe)
             result = api_resp
+            final_query = expanded_query
 
-        return jsonify(result)
-    else:
-        return "Error: No query or type provided"
+    return jsonify({"results": result, "query": final_query})
 
 
 # def get_results_from_solr(query, no_of_results):

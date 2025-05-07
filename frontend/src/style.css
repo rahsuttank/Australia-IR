@@ -90,6 +90,15 @@ body {
     justify-content: center;
   }
   
+  .toggle-group select {
+    padding: 0.5rem 1rem;   /* Increases height and horizontal padding */
+    font-size: 1rem;        /* Optional: makes text slightly larger */
+    min-width: 220px;       /* Increases the width */
+    height: 42px;           /* Direct control of height */
+    border-radius: 6px;     /* Optional: rounded corners */
+    border: 1px solid #ccc; /* Optional: border styling */
+  }
+
   .toggle-group {
     background: #242424;
     padding: 1rem;

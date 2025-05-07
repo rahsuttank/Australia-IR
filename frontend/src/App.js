@@ -8,12 +8,19 @@ function App() {
   const [query, setQuery] = useState('');
   const [type, setType] = useState('page_rank');
   const [results, setResults] = useState([]);
+  const [usedQuery, setUsedQuery] = useState('');
 
   const handleSearch = async () => {
     try {
-      const response = await fetch(`${BASE_URL}?query=url:${query}&type=${type}`);
+      const response = await fetch(`${BASE_URL}?query=${query}&type=${type}`);
       const data = await response.json();
-      setResults(Array.isArray(data) ? data : []);
+      if (Array.isArray(data)) {
+      setResults(data);
+      setUsedQuery(query);
+    } else {
+      setResults(data.results || []);
+      setUsedQuery(data.query || query);
+    }
 
       document.getElementById('google').src = `https://www.google.com/search?igu=1&source=hp&ei=lheWXriYJ4PktQXN-LPgDA&q=${query}`;
       document.getElementById('bing').src = `https://www.bing.com/search?q=${query}`;
@@ -29,7 +36,7 @@ function App() {
     return results.map((item, index) => (
       <div key={index} style={{ marginBottom: '1em' }}>
         <a href={item.url} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 'bold' }}>{item.title}</a>
-        <p style={{ fontSize: '0.9em' }}>{item.url}<br />{item.meta_info}</p>
+        <p style={{ fontSize: '0.9em', color: "black" }}>{item.url}<br />{item.meta_info}</p>
       </div>
     ));
   };
@@ -55,37 +62,30 @@ function App() {
 
           <div className="toolbar">
             <div className="toggle-group">
-              <legend>Relevance</legend>
-              <div className="toggle-buttons">
-                <input type="radio" id="page_rank" name="type" value="page_rank" checked={type === 'page_rank'} onChange={() => setType('page_rank')} />
-                <label htmlFor="page_rank">PageRank</label>
-                <input type="radio" id="hits" name="type" value="hits" checked={type === 'hits'} onChange={() => setType('hits')} />
-                <label htmlFor="hits">HITS</label>
-              </div>
-            </div>
-
-            <div className="toggle-group">
-              <legend>Clustering</legend>
-              <div className="toggle-buttons">
-                <input type="radio" id="flat_clustering" name="type" value="flat_clustering" checked={type === 'flat_clustering'} onChange={() => setType('flat_clustering')} />
-                <label htmlFor="flat_clustering">Flat</label>
-                <input type="radio" id="hierarchical_clustering" name="type" value="hierarchical_clustering" checked={type === 'hierarchical_clustering'} onChange={() => setType('hierarchical_clustering')} />
-                <label htmlFor="hierarchical_clustering">Hierarchical</label>
-              </div>
-            </div>
-
-            <div className="toggle-group">
-              <legend>Query Expansion</legend>
-              <div className="toggle-buttons">
-                <input type="radio" id="association_qe" name="type" value="association_qe" checked={type === 'association_qe'} onChange={() => setType('association_qe')} />
-                <label htmlFor="association_qe">Association</label>
-                <input type="radio" id="metric_qe" name="type" value="metric_qe" checked={type === 'metric_qe'} onChange={() => setType('metric_qe')} />
-                <label htmlFor="metric_qe">Metric</label>
-                <input type="radio" id="scalar_qe" name="type" value="scalar_qe" checked={type === 'scalar_qe'} onChange={() => setType('scalar_qe')} />
-                <label htmlFor="scalar_qe">Scalar</label>
-              </div>
+              <legend>Search Type</legend>
+              <select value={type} onChange={(e) => setType(e.target.value)}>
+                <optgroup label="Relevance">
+                  <option value="page_rank">PageRank</option>
+                  <option value="hits">HITS</option>
+                </optgroup>
+                <optgroup label="Clustering">
+                  <option value="flat_clustering">Flat</option>
+                  <option value="hierarchical_clustering">Hierarchical</option>
+                </optgroup>
+                <optgroup label="Query Expansion">
+                  <option value="association_qe">Association</option>
+                  <option value="metric_qe">Metric</option>
+                  <option value="scalar_qe">Scalar</option>
+                </optgroup>
+              </select>
             </div>
           </div>
+
+        </section>
+        <section>
+        <p style={{ color: 'white', fontStyle: 'italic' }}>
+          Showing results for: <strong>{usedQuery}</strong>
+        </p>
         </section>
 
         {/* 3-Column Layout Section */}
